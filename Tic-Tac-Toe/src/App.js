@@ -19,7 +19,11 @@ export default function Board() {
   if (winner) {
     status = `Winner: ${winner}`;
   } else {
+    if (isDraw(squares)) {
+      status = "Draw!";
+    } else {
     status = `Next player: ${xIsNext ? "X" : "O"}`;
+    }
   }
 
   return (
@@ -71,4 +75,8 @@ function calculateWinner(squares) {
   }
 
   return null;
+}
+
+function isDraw(squares) {
+  return squares.every((square) => square !== null);
 }
