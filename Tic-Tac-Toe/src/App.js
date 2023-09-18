@@ -2,15 +2,29 @@ import React, { useState } from "react";
 
 export default function Board() {
   const [squares, setSquares] = useState(Array(9).fill(null));
+  const [xIsNext, setXIsNext] = useState(true);
 
   function handleClick(i) {
+    if (squares[i] || calculateWinner(squares)) return;
+
     const nextSquares = squares.slice();
-    nextSquares[i] = "X";
+    nextSquares[i] = xIsNext ? "X" : "O";
+
     setSquares(nextSquares);
+    setXIsNext(!xIsNext);
+  }
+
+  const winner = calculateWinner(squares);
+  let status;
+  if (winner) {
+    status = `Winner: ${winner}`;
+  } else {
+    status = `Next player: ${xIsNext ? "X" : "O"}`;
   }
 
   return (
     <React.Fragment>
+      <div className="status">{status}</div>
       <div className="board-row">
         <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
         <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
@@ -32,4 +46,29 @@ export default function Board() {
 
 function Square({ value, onSquareClick }) {
   return <button className="square" onClick={onSquareClick} >{value}</button>;
+}
+
+function calculateWinner(squares) {
+  const lines = [
+    // Horizontal lines
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+
+    // Vertical lines
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+
+    // Diagonal lines
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  for (const [a, b, c] of lines) {
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c])
+      return squares[a];
+  }
+
+  return null;
 }
